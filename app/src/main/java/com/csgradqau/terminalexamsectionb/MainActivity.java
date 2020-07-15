@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNoteDialog(false, null, -1);
+                //showNoteDialog(false, null, -1);
             }
         });
 
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton(shouldUpdate ? "update" : "save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogBox, int id) {
-                            task t = new task(1, inputTitle.getText().toString(),inputDetails.getText().toString(),inputDeadline.getText().toString())
+                        task t = new task(1, inputTitle.getText().toString(),inputDetails.getText().toString(),inputDeadline.getText().toString());
                             db.addTask(t);
                     }
                 })
@@ -183,12 +183,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // check if user updating note
-                if (shouldUpdate && note != null) {
+                if (shouldUpdate && t != null) {
                     // update note by it's id
-                    updateNote(inputNote.getText().toString(), position);
+                    //updateNote(inputNote.getText().toString(), position);
                 } else {
                     // create new note
-                    createNote(inputNote.getText().toString());
+
+                   // addTask(inputNote.getText().toString());
                 }
             }
         });
