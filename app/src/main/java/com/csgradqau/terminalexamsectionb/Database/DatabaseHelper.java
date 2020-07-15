@@ -92,7 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
-    public int getNotesCount() {
+    public int getTaskCount() {
         String countQuery = "SELECT  * FROM " + task.TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private List<task> notesList = new ArrayList<>();
     private CoordinatorLayout coordinatorLayout;
     private RecyclerView recyclerView;
-    private TextView noNotesView;
+    private TextView emptytask;
 
     private DatabaseHelper db;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         recyclerView = findViewById(R.id.recycler_view);
-        noNotesView = findViewById(R.id.empty_task_view);
+        emptytask = findViewById(R.id.empty_task_view);
 
         db = new DatabaseHelper(this);
 
@@ -76,6 +77,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, final int position) {
                 Toast.makeText(getBaseContext(),"Pressed", Toast.LENGTH_LONG).show();
+                final Dialog dialog = new Dialog(getBaseContext()); // Context, this, etc.
+                dialog.setContentView(R.layout.dialog);
+                dialog.setTitle("Task");
+                TextView title = (TextView)dialog.findViewById(R.id.dialog_tastTitle);
+                TextView det = (TextView)dialog.findViewById(R.id.dialog_Details);
+                TextView dd = (TextView)dialog.findViewById(R.id.dialog_deadline);
+                task t = db.getTask(position);
+                title.setText(t.getTitle().toString());
+                det.setText(t.getTaskDetails().toString());
+                dd.setText(t.getDeadline().toString());
+                dialog.show();
             }
 
             @Override
@@ -195,10 +207,10 @@ public class MainActivity extends AppCompatActivity {
     private void toggleEmptyTasks() {
         // you can check notesList.size() > 0
 
-        if (db.getNotesCount() > 0) {
-            noNotesView.setVisibility(View.GONE);
+        if (db.getTaskCount() > 0) {
+            emptytask.setVisibility(View.GONE);
         } else {
-            noNotesView.setVisibility(View.VISIBLE);
+            emptytask.setVisibility(View.VISIBLE);
         }
     }
 }
