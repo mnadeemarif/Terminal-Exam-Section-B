@@ -1,10 +1,9 @@
 package com.csgradqau.terminalexamsectionb;
 import com.csgradqau.terminalexamsectionb.Database.DatabaseHelper;
 import com.csgradqau.terminalexamsectionb.Database.model.task;
-import com.csgradqau.terminalexamsectionb.taskAdapter;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +20,8 @@ import android.widget.Toast;
 
 import com.csgradqau.terminalexamsectionb.utils.MyDividerItemDecoration;
 import com.csgradqau.terminalexamsectionb.utils.RecyclerTouchListener;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setAdapter(mAdapter);
 
-        toggleEmptyNotes();
+        toggleEmptyTasks();
 
         /**
          * On long press on RecyclerView item, open alert dialog
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-                showActionsDialog(position);
+                //showActionsDialog(position);
             }
         }));
     }
@@ -87,13 +88,14 @@ public class MainActivity extends AppCompatActivity {
      * Inserting new note in db
      * and refreshing the list
      */
-    private void createNote(String note) {
+    private void addTask(int i, String title, String details, String deadline) {
         // inserting note in db and getting
         // newly inserted note id
-        long id = db.insertNote(note);
+        task t = new task(i,title,details,deadline);
+        long id = db.addTask(t);
 
         // get the newly inserted note from db
-        Note n = db.getNote(id);
+        task n = db.getTask(id);
 
         if (n != null) {
             // adding new note to array list at 0 position
@@ -102,93 +104,61 @@ public class MainActivity extends AppCompatActivity {
             // refreshing the list
             mAdapter.notifyDataSetChanged();
 
-            toggleEmptyNotes();
+            toggleEmptyTasks();
         }
     }
 
-    /**
-     * Updating note in db and updating
-     * item in the list by its position
-     */
-    private void updateNote(String note, int position) {
-        Note n = notesList.get(position);
-        // updating note text
-        n.setNote(note);
-
-        // updating note in db
-        db.updateNote(n);
-
-        // refreshing the list
-        notesList.set(position, n);
-        mAdapter.notifyItemChanged(position);
-
-        toggleEmptyNotes();
-    }
-
-    /**
-     * Deleting note from SQLite and removing the
-     * item from the list by its position
-     */
-    private void deleteNote(int position) {
-        // deleting the note from db
-        db.deleteNote(notesList.get(position));
-
-        // removing the note from the list
-        notesList.remove(position);
-        mAdapter.notifyItemRemoved(position);
-
-        toggleEmptyNotes();
-    }
-
-    /**
-     * Opens dialog with Edit - Delete options
-     * Edit - 0
-     * Delete - 0
-     */
-    private void showActionsDialog(final int position) {
-        CharSequence colors[] = new CharSequence[]{"Edit", "Delete"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose option");
-        builder.setItems(colors, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    showNoteDialog(true, notesList.get(position), position);
-                } else {
-                    deleteNote(position);
-                }
-            }
-        });
-        builder.show();
-    }
-
-
-    /**
-     * Shows alert dialog with EditText options to enter / edit
-     * a note.
-     * when shouldUpdate=true, it automatically displays old note and changes the
-     * button text to UPDATE
-     */
-    private void showNoteDialog(final boolean shouldUpdate, final Note note, final int position) {
+    private  void showTask(final boolean update, final task t, final int position)
+    {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
-        View view = layoutInflaterAndroid.inflate(R.layout.note_dialog, null);
+        View view = layoutInflaterAndroid.inflate(R.layout.task_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilderUserInput.setView(view);
+        final EditText inputTitle = view.findViewById(R.id.dialog_title);
+        final EditText inputDetails = view.findViewById(R.id.dialog_Details);
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+    }
+
+    private void showTaskDialog(final boolean shouldUpdate, final task t, final int position) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
+        View view = layoutInflaterAndroid.inflate(R.layout.task_dialog, null);
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this);
         alertDialogBuilderUserInput.setView(view);
 
-        final EditText inputNote = view.findViewById(R.id.note);
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText(!shouldUpdate ? getString(R.string.lbl_new_note_title) : getString(R.string.lbl_edit_note_title));
+        final EditText inputTitle = view.findViewById(R.id.dialog_tastTitle);
+        final EditText inputDetails = view.findViewById(R.id.dialog_Details);
+        final EditText inputDeadline = view.findViewById(R.id.dialog_deadline);
+        inputDeadline.setKeyListener(null);
+        MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("SELECT A DATE");
+        final MaterialDatePicker mdp = builder.build();
+        mdp.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+            @Override
+            public void onPositiveButtonClick(Object selection) {
+                inputDeadline.setText(mdp.getHeaderText());
+            }
+        });
 
-        if (shouldUpdate && note != null) {
-            inputNote.setText(note.getNote());
+        inputDeadline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mdp.show(getSupportFragmentManager(),"DOB_PICKER");
+            }
+        });
+        TextView dialogTitle = view.findViewById(R.id.dialog_title);
+        dialogTitle.setText(!shouldUpdate ? "New Title" : "");
+
+        if (shouldUpdate && t != null) {
+            inputTitle.setText(t.getTitle());
         }
         alertDialogBuilderUserInput
                 .setCancelable(false)
                 .setPositiveButton(shouldUpdate ? "update" : "save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogBox, int id) {
-
+                            task t = new task(1, inputTitle.getText().toString(),inputDetails.getText().toString(),inputDeadline.getText().toString())
+                            db.addTask(t);
                     }
                 })
                 .setNegativeButton("cancel",
@@ -205,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Show toast message when no text is entered
-                if (TextUtils.isEmpty(inputNote.getText().toString())) {
-                    Toast.makeText(MainActivity.this, "Enter note!", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(inputTitle.getText().toString())||TextUtils.isEmpty(inputDetails.getText().toString())||TextUtils.isEmpty((inputDeadline.getText().toString()))) {
+                    Toast.makeText(MainActivity.this, "You left something blank", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     alertDialog.dismiss();
@@ -227,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Toggling list and empty notes view
      */
-    private void toggleEmptyNotes() {
+    private void toggleEmptyTasks() {
         // you can check notesList.size() > 0
 
         if (db.getNotesCount() > 0) {
