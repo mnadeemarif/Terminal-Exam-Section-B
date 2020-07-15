@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //showNoteDialog(false, null, -1);
+                showTaskDialog(false, null, -1);
             }
         });
 
@@ -75,11 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, final int position) {
+                Toast.makeText(getBaseContext(),"Pressed", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onLongClick(View view, int position) {
-                //showActionsDialog(position);
             }
         }));
     }
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this);
         alertDialogBuilderUserInput.setView(view);
-        final EditText inputTitle = view.findViewById(R.id.dialog_title);
+        final EditText inputTitle = view.findViewById(R.id.dialog_tastTitle);
         final EditText inputDetails = view.findViewById(R.id.dialog_Details);
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
     }
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         TextView dialogTitle = view.findViewById(R.id.dialog_title);
-        dialogTitle.setText(!shouldUpdate ? "New Title" : "");
+        dialogTitle.setText(!shouldUpdate ? "New Task" : "");
 
         if (shouldUpdate && t != null) {
             inputTitle.setText(t.getTitle());
@@ -183,14 +183,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // check if user updating note
-                if (shouldUpdate && t != null) {
-                    // update note by it's id
-                    //updateNote(inputNote.getText().toString(), position);
-                } else {
-                    // create new note
-
-                   // addTask(inputNote.getText().toString());
-                }
+                //task a = new task(1, inputTitle.getText().toString(),inputDetails.getText().toString(),inputDeadline.getText().toString());
+                    addTask(1, inputTitle.getText().toString(),inputDetails.getText().toString(),inputDeadline.getText().toString());
             }
         });
     }
