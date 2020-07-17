@@ -9,11 +9,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:includeFontPadding="false"
+        android:includeFontPadding="true"
         android:text="Title"
         android:paddingLeft="20sp"
+        android:paddingVertical="25dp"
         android:lineSpacingExtra="0dp"
-        android:textSize="18sp" />
+        android:textSize="24dp" />
 
 
 </RelativeLayout>

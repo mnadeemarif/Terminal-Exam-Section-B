@@ -8,17 +8,14 @@
         android:id="@+id/dialog_tastTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="top"
-        android:lines="4"
+        android:layout_margin="20dp"
         android:text="klm"
         android:textSize="20sp" />
     <TextView
         android:id="@+id/dialog_Details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="top"
+        android:layout_margin="20dp"
         android:text="abc"
         android:lines="4"
         android:textSize="20sp" />
@@ -27,10 +24,8 @@
         android:id="@+id/dialog_deadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="top"
         android:text="xyz"
-        android:lines="4"
+        android:layout_margin="20dp"
         android:textSize="20sp" />
 
 </LinearLayout>

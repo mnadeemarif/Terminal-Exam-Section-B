@@ -23,6 +23,8 @@ import com.csgradqau.terminalexamsectionb.utils.MyDividerItemDecoration;
 import com.csgradqau.terminalexamsectionb.utils.RecyclerTouchListener;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private taskAdapter mAdapter;
-    private List<task> notesList = new ArrayList<>();
+    private List<task> taskList = new ArrayList<>();
     private CoordinatorLayout coordinatorLayout;
     private RecyclerView recyclerView;
     private TextView emptytask;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
-        notesList.addAll(db.getAllTasks());
+        taskList.addAll(db.getAllTasks());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mAdapter = new taskAdapter(this, notesList);
+        mAdapter = new taskAdapter(this, taskList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -77,17 +79,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, final int position) {
                 Toast.makeText(getBaseContext(),"Pressed", Toast.LENGTH_LONG).show();
-                final Dialog dialog = new Dialog(getBaseContext()); // Context, this, etc.
+                final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(MainActivity.this);
+                b.setTitle("Task Details");
+                b.setView(R.layout.dialog);
+                final Dialog dialog = new Dialog(MainActivity.this); // Context, this, etc.
                 dialog.setContentView(R.layout.dialog);
-                dialog.setTitle("Task");
+                //dialog.setTitle("Task");
                 TextView title = (TextView)dialog.findViewById(R.id.dialog_tastTitle);
                 TextView det = (TextView)dialog.findViewById(R.id.dialog_Details);
                 TextView dd = (TextView)dialog.findViewById(R.id.dialog_deadline);
-                task t = db.getTask(position);
+                task t = taskList.get(position);
                 title.setText(t.getTitle().toString());
                 det.setText(t.getTaskDetails().toString());
                 dd.setText(t.getDeadline().toString());
-                dialog.show();
+                b.show();
+                //dialog.show();
             }
 
             @Override
@@ -111,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (n != null) {
             // adding new note to array list at 0 position
-            notesList.add(0, n);
+            taskList.add(0, n);
 
             // refreshing the list
             mAdapter.notifyDataSetChanged();
@@ -120,17 +126,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private  void showTask(final boolean update, final task t, final int position)
-    {
-        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
-        View view = layoutInflaterAndroid.inflate(R.layout.task_dialog, null);
-
-        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilderUserInput.setView(view);
-        final EditText inputTitle = view.findViewById(R.id.dialog_tastTitle);
-        final EditText inputDetails = view.findViewById(R.id.dialog_Details);
-        TextView dialogTitle = view.findViewById(R.id.dialog_title);
-    }
 
     private void showTaskDialog(final boolean shouldUpdate, final task t, final int position) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
