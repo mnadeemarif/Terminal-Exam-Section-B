@@ -79,12 +79,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, final int position) {
                 Toast.makeText(getBaseContext(),"Pressed", Toast.LENGTH_LONG).show();
-                final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(MainActivity.this);
-                b.setTitle("Task Details");
-                b.setView(R.layout.dialog);
+                //final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(MainActivity.this);
+                //b.setTitle("Task Details");
+                //b.setView(R.layout.dialog);
                 final Dialog dialog = new Dialog(MainActivity.this); // Context, this, etc.
                 dialog.setContentView(R.layout.dialog);
-                //dialog.setTitle("Task");
+                dialog.setTitle("Task");
                 TextView title = (TextView)dialog.findViewById(R.id.dialog_tastTitle);
                 TextView det = (TextView)dialog.findViewById(R.id.dialog_Details);
                 TextView dd = (TextView)dialog.findViewById(R.id.dialog_deadline);
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 title.setText(t.getTitle().toString());
                 det.setText(t.getTaskDetails().toString());
                 dd.setText(t.getDeadline().toString());
-                b.show();
+                dialog.show();
                 //dialog.show();
             }
 
